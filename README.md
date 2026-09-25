@@ -2,8 +2,6 @@
   <img src="https://raw.githubusercontent.com/Coccinella-Labs/benchmark/main/.github/assets/thumbnail.png" alt="benchmark" width="100%">
 </p>
 
-speech model benchmark.
-
 Compares OpenAI Whisper against Meta's Wav2Vec2 (`facebook/wav2vec2-base-960h`) for transcription quality.
 
 ## Usage
