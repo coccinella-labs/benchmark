@@ -9,7 +9,7 @@ from harpertoken.dataset import LiveSpeechDataset
 def test_transcription(model_type="whisper", use_pretrained=False):
     # Load model for testing
     if use_pretrained:
-        model_name = "harpertoken/harpertokenASR"
+        model_name = "harpertoken/talk"
     elif model_type == "whisper":
         model_name = "openai/whisper-small"
     else:
