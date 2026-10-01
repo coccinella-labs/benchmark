@@ -59,7 +59,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--use_pretrained",
         action="store_true",
-        help="Use pretrained harpertokenASR model",
+        help="Use pretrained harpertoken/talk model",
     )
     args = parser.parse_args()
 
