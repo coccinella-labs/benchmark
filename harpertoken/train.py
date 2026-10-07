@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 import torch
-from huggingface_hub import HfApi, login
+from huggingface_hub import HfApi
 from torch.optim import AdamW, lr_scheduler
 from torch.utils.data import DataLoader
 
@@ -91,22 +91,32 @@ def train_model(model_type="whisper", num_epochs=10, initial_lr=1e-4):
     print(f"Final Loss: {training_log['loss'][-1]:.4f}")
     print(f"Final Learning Rate: {training_log['learning_rate'][-1]:.2e}")
 
-    # Upload to Hugging Face Hub
-    try:
-        # Login to Hugging Face (requires HF_TOKEN environment variable)
-        login()
+    # Upload to Hugging Face Hub, opt-in via FT_UPLOAD.
+    #
+    # The target comes from FT_REPO_ID rather than being hardcoded. The previous
+    # value, bniladridas/speech-recognition-ai-fine-tune-{model_type}, named a
+    # repo that does not exist under any namespace, and the published models in
+    # this org use short names, so a {model_type} template cannot map onto them.
+    # There is no correct default to bake in, so a missing target is an error
+    # rather than a guess.
+    if os.getenv("FT_UPLOAD", "false").lower() != "true":
+        print("Upload skipped. Set FT_UPLOAD=true with FT_REPO_ID to publish.")
+    else:
+        repo_id = os.getenv("FT_REPO_ID")
+        if not repo_id:
+            raise SystemExit(
+                "FT_UPLOAD is set but FT_REPO_ID is empty. Set FT_REPO_ID to the "
+                "target repository, for example harpertoken/talk."
+            )
+        hf_token = os.getenv("HF_TOKEN")
+        if not hf_token:
+            raise SystemExit("FT_UPLOAD is set but HF_TOKEN is empty.")
 
-        # Create repository and upload model
-        repo_id = f"bniladridas/speech-recognition-ai-fine-tune-{model_type}"
-        api = HfApi()
-
+        api = HfApi(token=hf_token)
         print(f"Uploading model to Hugging Face Hub: {repo_id}")
         api.upload_folder(
             folder_path=model_save_path,
             repo_id=repo_id,
             repo_type="model",
         )
-
         print("Upload completed successfully!")
-    except Exception as e:
-        print(f"Error uploading to Hugging Face Hub: {e!s}")
