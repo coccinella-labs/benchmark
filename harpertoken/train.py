@@ -104,13 +104,15 @@ def train_model(model_type="whisper", num_epochs=10, initial_lr=1e-4):
     else:
         repo_id = os.getenv("FT_REPO_ID")
         if not repo_id:
-            raise SystemExit(
+            msg = (
                 "FT_UPLOAD is set but FT_REPO_ID is empty. Set FT_REPO_ID to the "
                 "target repository, for example harpertoken/talk."
             )
+            raise SystemExit(msg)
         hf_token = os.getenv("HF_TOKEN")
         if not hf_token:
-            raise SystemExit("FT_UPLOAD is set but HF_TOKEN is empty.")
+            msg = "FT_UPLOAD is set but HF_TOKEN is empty."
+            raise SystemExit(msg)
 
         api = HfApi(token=hf_token)
         print(f"Uploading model to Hugging Face Hub: {repo_id}")
