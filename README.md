@@ -4,6 +4,10 @@
 
 Compares OpenAI Whisper against Meta's Wav2Vec2 (`facebook/wav2vec2-base-960h`) for transcription quality.
 
+**The comparison is not automated yet.** WER and CER are implemented in `harpertoken/evaluate.py` and unit-tested, but nothing in `main.py` or the training path calls them, so no script here runs both models and reports a score side by side. `main.py` trains a model; that is all it does. The examples below show how to load each model and get output, not how to compare them.
+
+Audio is captured live from the microphone via `sounddevice`. With `CI=true`, or when no input device is available, `LiveSpeechDataset` substitutes one second of silence, so a run can complete without hardware.
+
 ## Usage
 
 ```bash
@@ -11,6 +15,14 @@ pip install -r requirements.txt
 python main.py --model_type whisper    # default
 python main.py --model_type wav2vec2
 ```
+
+Publishing a fine-tuned model is opt-in and needs an explicit target. No repository name is hardcoded, because the previous default named a repo that no longer exists:
+
+```bash
+FT_UPLOAD=true FT_REPO_ID=harpertoken/talk HF_TOKEN=... python main.py --model_type whisper
+```
+
+Without `FT_UPLOAD=true` the run trains and skips the upload. With the flag set but `FT_REPO_ID` or `HF_TOKEN` missing, it fails loudly rather than appearing to publish.
 
 ## Layout
 
