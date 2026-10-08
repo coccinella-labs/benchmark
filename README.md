@@ -93,3 +93,7 @@ python run_tests.py
 python -m unittest tests.test_unit
 python tests/test_transcription.py --model_type whisper
 ```
+
+## License
+
+Apache 2.0. See LICENSE file.
